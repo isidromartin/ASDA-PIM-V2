@@ -83,6 +83,11 @@ export function LeafletMap({ center, zoom = 10, markers = [], onMapClick, onMark
   }, []);
 
   useEffect(() => {
+    if (!mapRef.current) return;
+    mapRef.current.setView(center, zoom);
+  }, [center, zoom]);
+
+  useEffect(() => {
     if (!mapRef.current || !window.L) return;
 
     markerLayerRef.current.forEach((m) => m.remove());
