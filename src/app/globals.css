@@ -16,3 +16,9 @@ body {
 button {
   cursor: pointer;
 }
+
+.leaflet-container,
+.leaflet-pane,
+.leaflet-control {
+  z-index: 10;
+}

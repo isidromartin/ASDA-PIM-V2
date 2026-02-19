@@ -19,7 +19,7 @@ export function WindowManager() {
   const { openWindows, closeWindow, resetDemo } = useDemoStore();
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-20 p-6">
+    <div className="pointer-events-none absolute inset-0 z-[1200] p-6">
       <div className="flex flex-wrap items-start gap-4">
         {openWindows.map((window) => (
           <div key={window.id} className="pointer-events-auto">
