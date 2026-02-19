@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useDemoStore } from '@/store/useDemoStore';
 import { initialMedia } from '@/mock/incident';
 
@@ -8,7 +9,10 @@ export function RightPanel() {
 
   return (
     <aside className="w-[320px] shrink-0 border-l border-slate-300 bg-white p-3">
-      <div className="mb-3 rounded border border-slate-300 bg-slate-50 p-3 text-center text-sm font-semibold">DAGAS-PIM</div>
+      <div className="mb-3 flex items-center justify-center gap-2 rounded border border-slate-300 bg-slate-50 p-3 text-sm font-semibold">
+        <Image src="/assets/icono.png" alt="DAGAS-PIM" width={20} height={20} className="h-5 w-5" />
+        <span>DAGAS-PIM</span>
+      </div>
       <section className="mb-3">
         <h4 className="mb-2 text-xs font-bold tracking-wide text-slate-700">CUADERNO DE BITÁCORA</h4>
         <div className="max-h-[260px] space-y-2 overflow-auto rounded border border-slate-200 p-2 text-xs">
