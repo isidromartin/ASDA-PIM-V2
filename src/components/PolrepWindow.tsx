@@ -1,10 +1,19 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useDemoStore } from "@/store/useDemoStore";
 
 export function PolrepWindow() {
-  const { addLog, polrepDraft, closeWindowByType, savePolrepDraft, enqueueNotification } = useDemoStore();
+  const {
+    addLog,
+    polrepDraft,
+    polrepCompleted,
+    polrepDraftSavedAt,
+    closeWindowByType,
+    savePolrepDraft,
+    completePolrep,
+    enqueueNotification
+  } = useDemoStore();
   const [form, setForm] = useState(polrepDraft);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
@@ -24,8 +33,46 @@ export function PolrepWindow() {
       ? "Paso 1/2: rellena cabecera mínima del POLREP."
       : "Paso 2/2: resume situación y acciones para difundir.";
 
+  useEffect(() => {
+    const timer = setTimeout(() => savePolrepDraft(form), 900);
+    return () => clearTimeout(timer);
+  }, [form, savePolrepDraft]);
+
+  const savedLabel = polrepDraftSavedAt ? `Borrador guardado: ${new Date(polrepDraftSavedAt).toLocaleTimeString()}` : 'Borrador pendiente';
+
+  const templates = [
+    {
+      id: 'vertido-leve',
+      label: 'Plantilla: Vertido leve',
+      resumen: 'Se confirma vertido leve localizado y contenido en origen.',
+      acciones: 'Mantener vigilancia, coordinar recogida y actualizar cada 30 minutos.'
+    },
+    {
+      id: 'sit-0',
+      label: 'Plantilla: Escalado SIT-0',
+      resumen: 'Incidente escalado a SIT-0 por ampliación de zona potencialmente afectada.',
+      acciones: 'Activar medios básicos, informar autoridades portuarias y reforzar seguimiento.'
+    },
+    {
+      id: 'sit-1',
+      label: 'Plantilla: Escalado SIT-1',
+      resumen: 'Incidente escalado a SIT-1 con impacto operativo y necesidad de coordinación ampliada.',
+      acciones: 'Coordinar recursos externos, emitir avisos prioritarios y establecer briefing periódico.'
+    }
+  ];
+
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
+
+    if (polrepCompleted) {
+      enqueueNotification({
+        message: "El POLREP ya fue completado. Reinicia el caso para volver a enviarlo.",
+        variant: "warning",
+        windowType: "about",
+        windowTitle: "Sobre DAGAS-PIM"
+      });
+      return;
+    }
 
     const hasErrors = Object.keys(errors).length > 0;
     if (hasErrors) {
@@ -39,7 +86,7 @@ export function PolrepWindow() {
       return;
     }
 
-    savePolrepDraft(form);
+    completePolrep(form);
     addLog(`POLREP guardado (${form.referencia || "sin referencia"})`, "Operador OC");
     enqueueNotification({
       message: `POLREP ${form.referencia} guardado en local (demo).`,
@@ -54,6 +101,20 @@ export function PolrepWindow() {
     <form className="space-y-3 text-sm" onSubmit={handleSubmit}>
       <h4 className="font-semibold">Informe POLREP</h4>
       <p className="rounded border border-blue-200 bg-blue-50 px-2 py-1 text-xs text-blue-800">{hint}</p>
+      <p className="text-xs text-slate-500">{savedLabel}</p>
+      {polrepCompleted && <p className="rounded border border-emerald-300 bg-emerald-50 px-2 py-1 text-xs text-emerald-800">POLREP ya completado.</p>}
+      <div className="flex flex-wrap gap-2">
+        {templates.map((tpl) => (
+          <button
+            key={tpl.id}
+            type="button"
+            className="rounded border border-slate-300 bg-slate-50 px-2 py-1 text-xs"
+            onClick={() => setForm((prev) => ({ ...prev, resumen: tpl.resumen, acciones: tpl.acciones }))}
+          >
+            {tpl.label}
+          </button>
+        ))}
+      </div>
       <div className="grid grid-cols-2 gap-2">
         <div>
           <input
@@ -108,8 +169,8 @@ export function PolrepWindow() {
         value={form.acciones}
         onChange={(e) => setForm({ ...form, acciones: e.target.value })}
       />
-      <button type="submit" className="rounded bg-blue-700 px-3 py-1 text-white">
-        Guardar POLREP (demo)
+      <button type="submit" disabled={polrepCompleted} className="rounded bg-blue-700 px-3 py-1 text-white disabled:cursor-not-allowed disabled:opacity-50">
+        {polrepCompleted ? "POLREP completado" : "Guardar POLREP (demo)"}
       </button>
     </form>
   );

@@ -88,6 +88,10 @@ type DemoStore = {
   alertDraft: AlertFormData;
   polrepDraft: PolrepFormData;
   noticePins: NoticePin[];
+  alertCompleted: boolean;
+  polrepCompleted: boolean;
+  alertDraftSavedAt?: string;
+  polrepDraftSavedAt?: string;
   guideData: {
     producto: string;
     lugar: string;
@@ -107,6 +111,8 @@ type DemoStore = {
   dismissActiveNotification: () => void;
   saveAlertDraft: (payload: AlertFormData) => void;
   savePolrepDraft: (payload: PolrepFormData) => void;
+  completeAlert: (payload: AlertFormData) => void;
+  completePolrep: (payload: PolrepFormData) => void;
   addNoticePin: (lat: number, lng: number, label?: string) => void;
   updateNoticePin: (id: string, patch: Partial<Pick<NoticePin, 'label' | 'priority'>>) => void;
   removeNoticePin: (id: string) => void;
@@ -149,6 +155,10 @@ const initialState = {
   noticePins: [
     { id: 'pin-1', lat: 28.138, lng: -15.417, label: 'Aviso inicial', priority: 'normal' }
   ],
+  alertCompleted: false,
+  polrepCompleted: false,
+  alertDraftSavedAt: undefined,
+  polrepDraftSavedAt: undefined,
   guideData: {
     producto: '',
     lugar: '',
@@ -226,8 +236,24 @@ export const useDemoStore = create<DemoStore>()(
             pendingActionCount: Math.max(0, state.pendingActionCount - 1)
           };
         }),
-      saveAlertDraft: (payload) => set({ alertDraft: payload, lastAction: 'Formulario Alerta guardado (mock).' }),
-      savePolrepDraft: (payload) => set({ polrepDraft: payload, lastAction: 'Formulario POLREP guardado (mock).' }),
+      saveAlertDraft: (payload) =>
+        set({ alertDraft: payload, alertDraftSavedAt: new Date().toISOString(), lastAction: 'Formulario Alerta guardado (mock).' }),
+      savePolrepDraft: (payload) =>
+        set({ polrepDraft: payload, polrepDraftSavedAt: new Date().toISOString(), lastAction: 'Formulario POLREP guardado (mock).' }),
+      completeAlert: (payload) =>
+        set({
+          alertDraft: payload,
+          alertCompleted: true,
+          alertDraftSavedAt: new Date().toISOString(),
+          lastAction: 'Alerta completada.'
+        }),
+      completePolrep: (payload) =>
+        set({
+          polrepDraft: payload,
+          polrepCompleted: true,
+          polrepDraftSavedAt: new Date().toISOString(),
+          lastAction: 'POLREP completado.'
+        }),
       addNoticePin: (lat, lng, label = 'Nuevo aviso') =>
         set((state) => ({
           noticePins: [...state.noticePins, { id: crypto.randomUUID(), lat, lng, label, priority: 'normal' }],
@@ -268,6 +294,10 @@ export const useDemoStore = create<DemoStore>()(
         alertDraft: state.alertDraft,
         polrepDraft: state.polrepDraft,
         noticePins: state.noticePins,
+        alertCompleted: state.alertCompleted,
+        polrepCompleted: state.polrepCompleted,
+        alertDraftSavedAt: state.alertDraftSavedAt,
+        polrepDraftSavedAt: state.polrepDraftSavedAt,
         guideData: state.guideData
       })
     }

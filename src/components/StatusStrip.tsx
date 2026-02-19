@@ -17,14 +17,15 @@ export function StatusStrip() {
     pendingActionCount,
     activeNotification,
     lastAction,
-    alertDraft,
-    polrepDraft,
+    alertCompleted,
+    polrepCompleted,
+    resetDemo,
   } = useDemoStore();
 
   const label = incidentStatus.replaceAll("_", ".");
   const checked = guideSteps.filter((step) => step.checked).length;
   const phase = incidentStatus === "ALERTA" ? "Fase de activación" : incidentStatus === "DESACTIVADO" ? "Fase de cierre" : "Fase de emergencia";
-  const plansReady = [alertDraft.instalacion, polrepDraft.referencia].filter(Boolean).length;
+  const plansReady = [alertCompleted, polrepCompleted].filter(Boolean).length;
   const pendingNotifications = pendingActionCount + (activeNotification ? 1 : 0);
 
   const contextualHint =
@@ -37,13 +38,15 @@ export function StatusStrip() {
           : "Flujo sugerido: documenta cierre y confirma checklist final.";
 
   const nextStep =
-    !alertDraft.instalacion
+    !alertCompleted
       ? { label: "Completar formulario de Alerta", action: () => openWindow("alert", "Alerta") }
-      : !polrepDraft.referencia
+      : !polrepCompleted
         ? { label: "Completar informe POLREP", action: () => openWindow("polrep", "Informe POLREP") }
         : checked < guideSteps.length
           ? { label: "Avanzar checklist operativo", action: () => openWindow("guide", "Guía Operador") }
           : { label: "Revisar avisos y comunicaciones", action: () => openWindow("notices", "Avisos emitidos") };
+
+  const caseCompleted = incidentStatus === "DESACTIVADO" && alertCompleted && polrepCompleted && checked === guideSteps.length;
 
   return (
     <div className="space-y-2 border-b border-slate-200 bg-white px-4 py-2 text-xs">
@@ -87,6 +90,17 @@ export function StatusStrip() {
         <p className="font-semibold">Siguiente paso recomendado</p>
         <p>{nextStep.label}</p>
       </button>
+      {caseCompleted && (
+        <button
+          className="w-full rounded border border-emerald-300 bg-emerald-50 px-3 py-2 text-left text-emerald-900"
+          onClick={() => {
+            if (window.confirm("Caso completado. ¿Quieres reiniciar todo el demo ahora?")) resetDemo();
+          }}
+        >
+          <p className="font-semibold">Caso completado</p>
+          <p>Reiniciar demo para comenzar un nuevo caso</p>
+        </button>
+      )}
     </div>
   );
 }

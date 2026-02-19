@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useDemoStore } from "@/store/useDemoStore";
 
 function compactTime(input: string) {
@@ -8,8 +8,17 @@ function compactTime(input: string) {
 }
 
 export function AlertFormWindow() {
-  const { addLog, openWindow, closeWindowByType, saveAlertDraft, alertDraft, enqueueNotification } =
-    useDemoStore();
+  const {
+    addLog,
+    openWindow,
+    closeWindowByType,
+    saveAlertDraft,
+    completeAlert,
+    alertDraft,
+    alertCompleted,
+    alertDraftSavedAt,
+    enqueueNotification
+  } = useDemoStore();
   const [form, setForm] = useState(alertDraft);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
@@ -37,8 +46,25 @@ export function AlertFormWindow() {
 
   const markTouched = (name: string) => setTouched((prev) => ({ ...prev, [name]: true }));
 
+  useEffect(() => {
+    const timer = setTimeout(() => saveAlertDraft(form), 900);
+    return () => clearTimeout(timer);
+  }, [form, saveAlertDraft]);
+
+  const savedLabel = alertDraftSavedAt ? `Borrador guardado: ${new Date(alertDraftSavedAt).toLocaleTimeString()}` : 'Borrador pendiente';
+
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
+
+    if (alertCompleted) {
+      enqueueNotification({
+        message: "La Alerta ya fue completada. Reinicia el caso para volver a enviarla.",
+        variant: "warning",
+        windowType: "about",
+        windowTitle: "Sobre DAGAS-PIM"
+      });
+      return;
+    }
 
     const hasErrors = Object.keys(errors).length > 0;
     if (hasErrors) {
@@ -58,7 +84,7 @@ export function AlertFormWindow() {
       return;
     }
 
-    saveAlertDraft(form);
+    completeAlert(form);
     addLog(
       `Alerta iniciada en ${form.lugar || "ubicación no definida"} (${form.producto || "producto pendiente"})`,
       "Operador OC"
@@ -76,6 +102,8 @@ export function AlertFormWindow() {
     <form className="space-y-3 text-sm" onSubmit={handleSubmit}>
       <h4 className="font-semibold">Contingencia en instalación origen conocido</h4>
       <p className="rounded border border-blue-200 bg-blue-50 px-2 py-1 text-xs text-blue-800">{stepHint}</p>
+      <p className="text-xs text-slate-500">{savedLabel}</p>
+      {alertCompleted && <p className="rounded border border-emerald-300 bg-emerald-50 px-2 py-1 text-xs text-emerald-800">Formulario ya completado.</p>}
       <div className="grid grid-cols-2 gap-2">
         <div>
           <input
@@ -141,8 +169,8 @@ export function AlertFormWindow() {
         onChange={(e) => setForm({ ...form, observaciones: e.target.value })}
       />
       <div className="flex gap-2">
-        <button type="submit" className="rounded bg-blue-700 px-3 py-1 text-white">
-          Aceptar/Guardar (demo)
+        <button type="submit" disabled={alertCompleted} className="rounded bg-blue-700 px-3 py-1 text-white disabled:cursor-not-allowed disabled:opacity-50">
+          {alertCompleted ? "Alerta completada" : "Aceptar/Guardar (demo)"}
         </button>
         <button
           type="button"

@@ -30,11 +30,11 @@
 
 ## Formularios
 
-- [ ] **Auto-guardado de borradores**
+- [x] **Auto-guardado de borradores**
   - Guardar en segundo plano (por tiempo o por campo) para Alerta y POLREP.
   - Mostrar indicador "Borrador guardado hace X".
 
-- [ ] **Plantillas rápidas de POLREP**
+- [x] **Plantillas rápidas de POLREP**
   - Presets para casos frecuentes (ej: vertido leve, escalado SIT-0/SIT-1).
   - Relleno inicial de resumen y acciones recomendadas.
 
@@ -55,3 +55,5 @@
 - [x] Iteración 1: recomendación de siguiente paso + notificaciones + modo edición mapa.
 - [x] Iteración 2: chinchetas editables + historial notificaciones.
 - [ ] Iteración 3: auto-guardado + plantillas POLREP + dock de ventanas.
+  - [x] Auto-guardado + plantillas POLREP completado
+  - [ ] Pendiente: dock de ventanas
