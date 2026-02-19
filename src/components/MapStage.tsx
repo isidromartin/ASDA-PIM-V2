@@ -8,6 +8,7 @@ export function MapStage() {
   const overlaysEnabled = useDemoStore((state) => state.overlaysEnabled);
   const noticePins = useDemoStore((state) => state.noticePins);
   const addNoticePin = useDemoStore((state) => state.addNoticePin);
+  const toggleOverlay = useDemoStore((state) => state.toggleOverlay);
 
   const markers = useMemo(
     () => noticePins.map((pin) => ({ id: pin.id, lat: pin.lat, lng: pin.lng, label: pin.label })),
@@ -29,6 +30,15 @@ export function MapStage() {
       <div className="pointer-events-none absolute left-2 top-2 rounded bg-white/85 px-2 py-1 text-xs text-slate-700">
         {overlaysEnabled ? 'Haz click para añadir chinchetas de aviso.' : 'Activa Iconos para habilitar chinchetas.'}
       </div>
+      <button
+        type="button"
+        className={`absolute right-2 top-2 rounded border px-2 py-1 text-xs ${
+          overlaysEnabled ? 'border-blue-400 bg-blue-100 text-blue-900' : 'border-slate-300 bg-white text-slate-700'
+        }`}
+        onClick={toggleOverlay}
+      >
+        Modo edición mapa: {overlaysEnabled ? 'ON' : 'OFF'}
+      </button>
     </div>
   );
 }

@@ -6,7 +6,7 @@
 
 ## Prioridad alta
 
-- [ ] **Siguiente paso recomendado global**
+- [x] **Siguiente paso recomendado global**
   - Mostrar una tarjeta persistente con el siguiente paso sugerido según estado (ej: completar POLREP, emitir avisos).
   - Añadir CTA directo para abrir la ventana correspondiente.
 
@@ -14,7 +14,7 @@
   - Guiar al operador según `incidentStatus` y acciones recientes.
   - Ejemplos: flujo ALERTA, flujo EMERGENCIA SIT-1.
 
-- [ ] **Notificaciones flotantes más robustas**
+- [x] **Notificaciones flotantes más robustas**
   - Ajustar tiempos por severidad (`info`, `warning`, `success`).
   - Añadir acceso a historial de notificaciones pendientes.
 
@@ -24,7 +24,7 @@
   - Permitir renombrar, borrar y marcar prioridad/color de cada aviso.
   - Mostrar detalle en click (hora, actor, estado).
 
-- [ ] **Modo edición de mapa explícito**
+- [x] **Modo edición de mapa explícito**
   - Toggle visible ON/OFF para alta de chinchetas.
   - Feedback visual claro cuando el modo está activo.
 
@@ -52,6 +52,6 @@
 
 ## Seguimiento
 
-- [ ] Iteración 1: recomendación de siguiente paso + notificaciones + modo edición mapa.
+- [x] Iteración 1: recomendación de siguiente paso + notificaciones + modo edición mapa.
 - [ ] Iteración 2: chinchetas editables + historial notificaciones.
 - [ ] Iteración 3: auto-guardado + plantillas POLREP + dock de ventanas.

@@ -27,6 +27,15 @@ export function StatusStrip() {
   const plansReady = [alertDraft.instalacion, polrepDraft.referencia].filter(Boolean).length;
   const pendingNotifications = pendingActionCount + (activeNotification ? 1 : 0);
 
+  const nextStep =
+    !alertDraft.instalacion
+      ? { label: "Completar formulario de Alerta", action: () => openWindow("alert", "Alerta") }
+      : !polrepDraft.referencia
+        ? { label: "Completar informe POLREP", action: () => openWindow("polrep", "Informe POLREP") }
+        : checked < guideSteps.length
+          ? { label: "Avanzar checklist operativo", action: () => openWindow("guide", "Guía Operador") }
+          : { label: "Revisar avisos y comunicaciones", action: () => openWindow("notices", "Avisos emitidos") };
+
   return (
     <div className="space-y-2 border-b border-slate-200 bg-white px-4 py-2 text-xs">
       <div className="flex flex-wrap items-center gap-2">
@@ -58,6 +67,13 @@ export function StatusStrip() {
           <p className="truncate">{lastAction}</p>
         </button>
       </div>
+      <button
+        className="w-full rounded border border-blue-300 bg-blue-50 px-3 py-2 text-left text-blue-900"
+        onClick={nextStep.action}
+      >
+        <p className="font-semibold">Siguiente paso recomendado</p>
+        <p>{nextStep.label}</p>
+      </button>
     </div>
   );
 }

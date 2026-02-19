@@ -9,12 +9,19 @@ const styleByVariant = {
   warning: "border-amber-300 bg-amber-50 text-amber-900",
 };
 
+const dismissMsByVariant = {
+  info: 4500,
+  success: 6000,
+  warning: 8000,
+};
+
 export function NotificationBanner() {
-  const { activeNotification, dismissActiveNotification, openWindow } = useDemoStore();
+  const { activeNotification, dismissActiveNotification, openWindow, pendingActionCount } = useDemoStore();
 
   useEffect(() => {
     if (!activeNotification) return;
-    const timer = setTimeout(() => dismissActiveNotification(), 2600);
+    const timeoutMs = dismissMsByVariant[activeNotification.variant];
+    const timer = setTimeout(() => dismissActiveNotification(), timeoutMs);
     return () => clearTimeout(timer);
   }, [activeNotification, dismissActiveNotification]);
 
@@ -32,6 +39,15 @@ export function NotificationBanner() {
           </button>
         </div>
         <p>{activeNotification.message}</p>
+        {pendingActionCount > 0 && (
+          <button
+            type="button"
+            className="mt-2 rounded border border-current/40 px-2 py-0.5 text-[11px]"
+            onClick={() => openWindow("notices", "Avisos emitidos")}
+          >
+            Ver pendientes ({pendingActionCount})
+          </button>
+        )}
         {activeNotification.windowType && activeNotification.windowTitle && (
           <button
             type="button"
