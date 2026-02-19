@@ -6,17 +6,19 @@ import { ports } from "@/mock/ports";
 import { useDemoStore } from "@/store/useDemoStore";
 import { LeafletMap } from "@/components/LeafletMap";
 
+const defaultPortId = ports.find((port) => port.clickable)?.id ?? "";
+
 export default function SelectPortPage() {
   const router = useRouter();
   const setPort = useDemoStore((state) => state.setPort);
   const setZone = useDemoStore((state) => state.setZone);
-  const [selectedPortId, setSelectedPortId] = useState<string>("");
+  const [selectedPortId, setSelectedPortId] = useState<string>(defaultPortId);
 
   const selectedPort = ports.find((port) => port.id === selectedPortId);
 
-  const continueToZone = () => {
-    if (!selectedPortId) return;
-    setPort(selectedPortId);
+  const continueToZone = (portId = selectedPortId) => {
+    if (!portId) return;
+    setPort(portId);
     router.push("/select-zone");
   };
 
@@ -56,22 +58,40 @@ export default function SelectPortPage() {
         />
       </div>
 
-      <div className="mt-3 grid grid-cols-3 gap-2">
+      <div className="mt-3 grid grid-cols-1 gap-2 md:grid-cols-3">
         {ports.map((port) => (
-          <button
+          <div
             key={port.id}
-            type="button"
-            onClick={() => port.clickable && setSelectedPortId(port.id)}
-            disabled={!port.clickable}
-            className={`rounded border px-3 py-2 text-left text-xs ${
-              selectedPortId === port.id
-                ? "border-blue-700 bg-blue-50"
-                : "border-slate-300 bg-white"
-            } disabled:cursor-not-allowed disabled:opacity-50`}
+            className={`rounded border px-3 py-2 text-xs ${selectedPortId === port.id ? "border-blue-700 bg-blue-50" : "border-slate-300 bg-white"}`}
           >
-            <p className="font-semibold">{port.name}</p>
-            <p className="text-slate-600">{port.description}</p>
-          </button>
+            <button
+              type="button"
+              onClick={() => port.clickable && setSelectedPortId(port.id)}
+              disabled={!port.clickable}
+              className="w-full text-left disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <p className="font-semibold">{port.name}</p>
+              <p className="text-slate-600">{port.description}</p>
+            </button>
+            <div className="mt-2 flex gap-2">
+              <button
+                type="button"
+                onClick={() => continueToZone(port.id)}
+                disabled={!port.clickable}
+                className="rounded border border-slate-400 bg-white px-2 py-1 text-[11px] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Elegir zona
+              </button>
+              <button
+                type="button"
+                onClick={() => continueToIncident(port.id)}
+                disabled={!port.quickIncident}
+                className="rounded bg-slate-900 px-2 py-1 text-[11px] text-white disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Ir a incidents
+              </button>
+            </div>
+          </div>
         ))}
       </div>
 
@@ -81,7 +101,7 @@ export default function SelectPortPage() {
         </p>
         <div className="flex items-center gap-2">
           <button
-            onClick={continueToZone}
+            onClick={() => continueToZone()}
             disabled={!selectedPortId}
             className="rounded-lg border border-slate-400 bg-white px-4 py-2 text-sm font-medium text-slate-900 disabled:cursor-not-allowed disabled:opacity-40"
           >
