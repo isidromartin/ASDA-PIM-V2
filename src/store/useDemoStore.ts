@@ -102,6 +102,7 @@ type DemoStore = {
   toggleOverlay: () => void;
   openWindow: (type: WindowType, title: string) => void;
   closeWindow: (id: string) => void;
+  closeWindowByType: (type: WindowType) => void;
   enqueueNotification: (input: Omit<NotificationItem, 'id' | 'createdAt'>) => void;
   dismissActiveNotification: () => void;
   saveAlertDraft: (payload: AlertFormData) => void;
@@ -194,6 +195,11 @@ export const useDemoStore = create<DemoStore>()(
           };
         }),
       closeWindow: (id) => set((state) => ({ openWindows: state.openWindows.filter((window) => window.id !== id) })),
+      closeWindowByType: (type) =>
+        set((state) => ({
+          openWindows: state.openWindows.filter((window) => window.type !== type),
+          lastAction: `Ventana completada: ${type}`
+        })),
       enqueueNotification: (input) =>
         set((state) => {
           const item = { ...input, id: crypto.randomUUID(), createdAt: new Date().toISOString() };

@@ -4,7 +4,7 @@ import { FormEvent, useMemo, useState } from "react";
 import { useDemoStore } from "@/store/useDemoStore";
 
 export function PolrepWindow() {
-  const { addLog, polrepDraft, savePolrepDraft, enqueueNotification } = useDemoStore();
+  const { addLog, polrepDraft, closeWindowByType, savePolrepDraft, enqueueNotification } = useDemoStore();
   const [form, setForm] = useState(polrepDraft);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
@@ -47,6 +47,7 @@ export function PolrepWindow() {
       windowType: "polrep",
       windowTitle: "Informe POLREP"
     });
+    closeWindowByType("polrep");
   };
 
   return (

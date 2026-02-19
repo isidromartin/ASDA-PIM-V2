@@ -8,7 +8,7 @@ function compactTime(input: string) {
 }
 
 export function AlertFormWindow() {
-  const { addLog, openWindow, saveAlertDraft, alertDraft, enqueueNotification } =
+  const { addLog, openWindow, closeWindowByType, saveAlertDraft, alertDraft, enqueueNotification } =
     useDemoStore();
   const [form, setForm] = useState(alertDraft);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -69,6 +69,7 @@ export function AlertFormWindow() {
       windowType: "alert",
       windowTitle: "Alerta"
     });
+    closeWindowByType("alert");
   };
 
   return (

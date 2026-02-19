@@ -3,7 +3,7 @@
 import { useDemoStore } from '@/store/useDemoStore';
 
 export function NoticesWindow() {
-  const { activeNotification, notifications, notificationHistory, dismissActiveNotification } = useDemoStore();
+  const { activeNotification, notifications, notificationHistory, dismissActiveNotification, closeWindowByType } = useDemoStore();
 
   return (
     <div className="space-y-3 text-xs text-slate-700">
@@ -29,6 +29,13 @@ export function NoticesWindow() {
           ))}
         </ul>
       </div>
+
+      <button
+        className="rounded border border-emerald-300 bg-emerald-50 px-2 py-1 text-emerald-800"
+        onClick={() => closeWindowByType('notices')}
+      >
+        Gestión completada · cerrar ventana
+      </button>
     </div>
   );
 }
