@@ -7,6 +7,7 @@ import { AlertFormWindow } from './AlertFormWindow';
 import { CctvWindow } from './CctvWindow';
 import { DirectoryWindow } from './DirectoryWindow';
 import { GuideWindow } from './GuideWindow';
+import { NoticesWindow } from './NoticesWindow';
 import { PolrepWindow } from './PolrepWindow';
 import { SourceWindow } from './SourceWindow';
 import { VirtualRoomWindow } from './VirtualRoomWindow';
@@ -19,7 +20,7 @@ export function WindowManager() {
   const { openWindows, closeWindow, resetDemo } = useDemoStore();
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-20 p-6">
+    <div className="pointer-events-none absolute inset-0 z-[1200] p-6">
       <div className="flex flex-wrap items-start gap-4">
         {openWindows.map((window) => (
           <div key={window.id} className="pointer-events-auto">
@@ -50,7 +51,7 @@ export function WindowManager() {
               {window.type === 'cctv' && <CctvWindow />}
               {window.type === 'virtual-room' && <VirtualRoomWindow />}
               {window.type === 'calls' && <Placeholder text="Campaña de llamadas (demo)." />}
-              {window.type === 'notices' && <Placeholder text="Avisos emitidos (demo)." />}
+              {window.type === 'notices' && <NoticesWindow />}
               {window.type === 'scenario' && <Placeholder text="Generación de escenario placeholder (demo)." />}
               {window.type === 'simulacro' && <Placeholder text="Simulacro en preparación (demo)." />}
             </AppWindow>

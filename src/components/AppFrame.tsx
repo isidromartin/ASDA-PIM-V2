@@ -1,6 +1,7 @@
 import { MapStage } from './MapStage';
 import { MenuRibbon } from './MenuRibbon';
 import { RightPanel } from './RightPanel';
+import { NotificationBanner } from './NotificationBanner';
 import { StatusStrip } from './StatusStrip';
 import { WindowManager } from './WindowManager';
 
@@ -16,6 +17,7 @@ export function AppFrame() {
         </div>
         <RightPanel />
       </div>
+      <NotificationBanner />
     </div>
   );
 }
