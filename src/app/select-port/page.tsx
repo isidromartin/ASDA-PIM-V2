@@ -9,12 +9,22 @@ import { LeafletMap } from "@/components/LeafletMap";
 export default function SelectPortPage() {
   const router = useRouter();
   const setPort = useDemoStore((state) => state.setPort);
+  const setZone = useDemoStore((state) => state.setZone);
   const [selectedPortId, setSelectedPortId] = useState<string>("");
+
+  const selectedPort = ports.find((port) => port.id === selectedPortId);
 
   const continueToZone = () => {
     if (!selectedPortId) return;
     setPort(selectedPortId);
     router.push("/select-zone");
+  };
+
+  const continueToIncident = (portId = selectedPortId) => {
+    if (!portId) return;
+    setPort(portId);
+    setZone("zona-1");
+    router.push("/incident");
   };
 
   const markers = useMemo(
@@ -45,19 +55,46 @@ export default function SelectPortPage() {
           className="h-full w-full"
         />
       </div>
-      <div className="mt-4 flex items-center justify-between">
+
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        {ports.map((port) => (
+          <button
+            key={port.id}
+            type="button"
+            onClick={() => port.clickable && setSelectedPortId(port.id)}
+            disabled={!port.clickable}
+            className={`rounded border px-3 py-2 text-left text-xs ${
+              selectedPortId === port.id
+                ? "border-blue-700 bg-blue-50"
+                : "border-slate-300 bg-white"
+            } disabled:cursor-not-allowed disabled:opacity-50`}
+          >
+            <p className="font-semibold">{port.name}</p>
+            <p className="text-slate-600">{port.description}</p>
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-4 flex items-center justify-between gap-2">
         <p className="text-sm text-slate-700">
-          {selectedPortId
-            ? `Seleccionado: ${ports.find((port) => port.id === selectedPortId)?.name}`
-            : "Selecciona un puerto para continuar"}
+          {selectedPortId ? `Seleccionado: ${selectedPort?.name}` : "Selecciona un puerto para continuar"}
         </p>
-        <button
-          onClick={continueToZone}
-          disabled={!selectedPortId}
-          className="rounded-lg bg-slate-900 px-5 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          Continuar
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={continueToZone}
+            disabled={!selectedPortId}
+            className="rounded-lg border border-slate-400 bg-white px-4 py-2 text-sm font-medium text-slate-900 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Elegir zona
+          </button>
+          <button
+            onClick={() => continueToIncident()}
+            disabled={!selectedPort?.quickIncident}
+            className="rounded-lg bg-slate-900 px-5 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Ir a incidents
+          </button>
+        </div>
       </div>
     </main>
   );
