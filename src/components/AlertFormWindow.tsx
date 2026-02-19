@@ -79,7 +79,7 @@ export function AlertFormWindow() {
         <button
           type="button"
           className="rounded border border-slate-300 px-3 py-1"
-          onClick={() => openWindow("guide", "Guía Burro Operador")}
+          onClick={() => openWindow("guide", "Guía Operador")}
         >
           Abrir guía
         </button>
