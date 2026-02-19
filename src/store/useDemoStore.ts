@@ -57,12 +57,14 @@ type NoticePin = {
   lat: number;
   lng: number;
   label: string;
+  priority: 'normal' | 'high';
 };
 
-type NotificationItem = {
+export type NotificationItem = {
   id: string;
   message: string;
   variant: 'info' | 'success' | 'warning';
+  createdAt: string;
   windowType?: WindowType;
   windowTitle?: string;
 };
@@ -79,6 +81,7 @@ type DemoStore = {
   guideSteps: GuideStep[];
   openWindows: WindowState[];
   notifications: NotificationItem[];
+  notificationHistory: NotificationItem[];
   activeNotification: NotificationItem | null;
   pendingActionCount: number;
   lastAction: string;
@@ -99,11 +102,13 @@ type DemoStore = {
   toggleOverlay: () => void;
   openWindow: (type: WindowType, title: string) => void;
   closeWindow: (id: string) => void;
-  enqueueNotification: (input: Omit<NotificationItem, 'id'>) => void;
+  enqueueNotification: (input: Omit<NotificationItem, 'id' | 'createdAt'>) => void;
   dismissActiveNotification: () => void;
   saveAlertDraft: (payload: AlertFormData) => void;
   savePolrepDraft: (payload: PolrepFormData) => void;
   addNoticePin: (lat: number, lng: number, label?: string) => void;
+  updateNoticePin: (id: string, patch: Partial<Pick<NoticePin, 'label' | 'priority'>>) => void;
+  removeNoticePin: (id: string) => void;
   checkGuideStep: (id: number) => void;
   setGuideData: (field: keyof DemoStore['guideData'], value: string) => void;
   resetDemo: () => void;
@@ -119,6 +124,7 @@ const initialState = {
   guideSteps: makeGuideSteps(),
   openWindows: [],
   notifications: [],
+  notificationHistory: [],
   activeNotification: null,
   pendingActionCount: 0,
   lastAction: 'Sistema inicializado',
@@ -140,7 +146,7 @@ const initialState = {
     acciones: ''
   },
   noticePins: [
-    { id: 'pin-1', lat: 28.138, lng: -15.417, label: 'Aviso inicial' }
+    { id: 'pin-1', lat: 28.138, lng: -15.417, label: 'Aviso inicial', priority: 'normal' }
   ],
   guideData: {
     producto: '',
@@ -190,12 +196,17 @@ export const useDemoStore = create<DemoStore>()(
       closeWindow: (id) => set((state) => ({ openWindows: state.openWindows.filter((window) => window.id !== id) })),
       enqueueNotification: (input) =>
         set((state) => {
-          const item = { ...input, id: crypto.randomUUID() };
+          const item = { ...input, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
           if (!state.activeNotification) {
-            return { activeNotification: item, lastAction: `Notificación: ${input.message}` };
+            return {
+              activeNotification: item,
+              notificationHistory: [item, ...state.notificationHistory].slice(0, 50),
+              lastAction: `Notificación: ${input.message}`
+            };
           }
           return {
             notifications: [...state.notifications, item],
+            notificationHistory: [item, ...state.notificationHistory].slice(0, 50),
             pendingActionCount: state.pendingActionCount + 1,
             lastAction: `Notificación en cola: ${input.message}`
           };
@@ -213,8 +224,19 @@ export const useDemoStore = create<DemoStore>()(
       savePolrepDraft: (payload) => set({ polrepDraft: payload, lastAction: 'Formulario POLREP guardado (mock).' }),
       addNoticePin: (lat, lng, label = 'Nuevo aviso') =>
         set((state) => ({
-          noticePins: [...state.noticePins, { id: crypto.randomUUID(), lat, lng, label }],
+          noticePins: [...state.noticePins, { id: crypto.randomUUID(), lat, lng, label, priority: 'normal' }],
           lastAction: `Chincheta añadida en ${lat.toFixed(4)}, ${lng.toFixed(4)}`
+        })),
+
+      updateNoticePin: (id, patch) =>
+        set((state) => ({
+          noticePins: state.noticePins.map((pin) => (pin.id === id ? { ...pin, ...patch } : pin)),
+          lastAction: 'Aviso actualizado en el mapa.'
+        })),
+      removeNoticePin: (id) =>
+        set((state) => ({
+          noticePins: state.noticePins.filter((pin) => pin.id !== id),
+          lastAction: 'Aviso eliminado del mapa.'
         })),
       checkGuideStep: (id) =>
         set((state) => ({
@@ -234,6 +256,7 @@ export const useDemoStore = create<DemoStore>()(
         guideSteps: state.guideSteps,
         notifications: state.notifications,
         activeNotification: state.activeNotification,
+        notificationHistory: state.notificationHistory,
         pendingActionCount: state.pendingActionCount,
         lastAction: state.lastAction,
         alertDraft: state.alertDraft,

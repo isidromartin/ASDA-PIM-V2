@@ -7,6 +7,7 @@ import { AlertFormWindow } from './AlertFormWindow';
 import { CctvWindow } from './CctvWindow';
 import { DirectoryWindow } from './DirectoryWindow';
 import { GuideWindow } from './GuideWindow';
+import { NoticesWindow } from './NoticesWindow';
 import { PolrepWindow } from './PolrepWindow';
 import { SourceWindow } from './SourceWindow';
 import { VirtualRoomWindow } from './VirtualRoomWindow';
@@ -50,7 +51,7 @@ export function WindowManager() {
               {window.type === 'cctv' && <CctvWindow />}
               {window.type === 'virtual-room' && <VirtualRoomWindow />}
               {window.type === 'calls' && <Placeholder text="Campaña de llamadas (demo)." />}
-              {window.type === 'notices' && <Placeholder text="Avisos emitidos (demo)." />}
+              {window.type === 'notices' && <NoticesWindow />}
               {window.type === 'scenario' && <Placeholder text="Generación de escenario placeholder (demo)." />}
               {window.type === 'simulacro' && <Placeholder text="Simulacro en preparación (demo)." />}
             </AppWindow>

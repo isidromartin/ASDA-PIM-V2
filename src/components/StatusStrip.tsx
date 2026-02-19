@@ -27,6 +27,15 @@ export function StatusStrip() {
   const plansReady = [alertDraft.instalacion, polrepDraft.referencia].filter(Boolean).length;
   const pendingNotifications = pendingActionCount + (activeNotification ? 1 : 0);
 
+  const contextualHint =
+    incidentStatus === "ALERTA"
+      ? "Flujo sugerido: valida alerta, geolocaliza aviso y abre POLREP."
+      : incidentStatus === "EMERGENCIA_SIT_0"
+        ? "Flujo sugerido: coordina llamadas y valida medios disponibles."
+        : incidentStatus === "EMERGENCIA_SIT_1"
+          ? "Flujo sugerido: emite avisos prioritarios y revisa seguimiento continuo."
+          : "Flujo sugerido: documenta cierre y confirma checklist final.";
+
   const nextStep =
     !alertDraft.instalacion
       ? { label: "Completar formulario de Alerta", action: () => openWindow("alert", "Alerta") }
@@ -66,6 +75,10 @@ export function StatusStrip() {
           <p className="font-semibold">Última acción</p>
           <p className="truncate">{lastAction}</p>
         </button>
+      </div>
+      <div className="w-full rounded border border-indigo-300 bg-indigo-50 px-3 py-2 text-left text-indigo-900">
+        <p className="font-semibold">Hint contextual</p>
+        <p>{contextualHint}</p>
       </div>
       <button
         className="w-full rounded border border-blue-300 bg-blue-50 px-3 py-2 text-left text-blue-900"

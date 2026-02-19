@@ -10,7 +10,7 @@
   - Mostrar una tarjeta persistente con el siguiente paso sugerido según estado (ej: completar POLREP, emitir avisos).
   - Añadir CTA directo para abrir la ventana correspondiente.
 
-- [ ] **Hints / onboarding contextual por fase**
+- [x] **Hints / onboarding contextual por fase**
   - Guiar al operador según `incidentStatus` y acciones recientes.
   - Ejemplos: flujo ALERTA, flujo EMERGENCIA SIT-1.
 
@@ -20,7 +20,7 @@
 
 ## Mapa y geolocalización
 
-- [ ] **Chinchetas editables**
+- [x] **Chinchetas editables**
   - Permitir renombrar, borrar y marcar prioridad/color de cada aviso.
   - Mostrar detalle en click (hora, actor, estado).
 
@@ -53,5 +53,5 @@
 ## Seguimiento
 
 - [x] Iteración 1: recomendación de siguiente paso + notificaciones + modo edición mapa.
-- [ ] Iteración 2: chinchetas editables + historial notificaciones.
+- [x] Iteración 2: chinchetas editables + historial notificaciones.
 - [ ] Iteración 3: auto-guardado + plantillas POLREP + dock de ventanas.
