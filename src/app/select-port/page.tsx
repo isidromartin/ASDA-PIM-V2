@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ports } from "@/mock/ports";
 import { useDemoStore } from "@/store/useDemoStore";
+import { LeafletMap } from "@/components/LeafletMap";
 
 export default function SelectPortPage() {
   const router = useRouter();
@@ -16,32 +17,33 @@ export default function SelectPortPage() {
     router.push("/select-zone");
   };
 
+  const markers = useMemo(
+    () =>
+      ports.map((port) => ({
+        id: port.id,
+        lat: port.coordinates.lat,
+        lng: port.coordinates.lng,
+        label: `${port.name}${port.clickable ? "" : " (no disponible demo)"}`,
+        selected: selectedPortId === port.id,
+      })),
+    [selectedPortId]
+  );
+
   return (
     <main className="flex h-screen flex-col bg-slate-100 p-8">
       <h1 className="mb-4 text-2xl font-semibold">Seleccione un puerto</h1>
-      <div className="relative flex-1 rounded-xl border border-slate-300 bg-[linear-gradient(150deg,#d9ecff,#f6fbff)]">
-        {ports.map((port) => {
-          const isSelected = selectedPortId === port.id;
-          return (
-            <button
-              key={port.id}
-              style={port.position}
-              className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-full border px-3 py-1 text-xs transition ${
-                !port.clickable
-                  ? "cursor-not-allowed border-slate-400 bg-white text-slate-500"
-                  : isSelected
-                    ? "border-blue-900 bg-blue-900 text-white ring-4 ring-blue-200"
-                    : "border-blue-700 bg-blue-700 text-white hover:bg-blue-800"
-              }`}
-              onClick={() => {
-                if (!port.clickable) return;
-                setSelectedPortId(port.id);
-              }}
-            >
-              {port.name}
-            </button>
-          );
-        })}
+      <div className="relative flex-1 overflow-hidden rounded-xl border border-slate-300 bg-slate-200">
+        <LeafletMap
+          center={[28.12, -15.42]}
+          zoom={11}
+          markers={markers}
+          onMarkerClick={(id) => {
+            const port = ports.find((item) => item.id === id);
+            if (!port?.clickable) return;
+            setSelectedPortId(id);
+          }}
+          className="h-full w-full"
+        />
       </div>
       <div className="mt-4 flex items-center justify-between">
         <p className="text-sm text-slate-700">

@@ -1,8 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDemoStore } from "@/store/useDemoStore";
+import { LeafletMap } from "@/components/LeafletMap";
+
+const zones = [
+  { id: "zona-1", label: "Zona I", lat: 28.145, lng: -15.405 },
+  { id: "zona-2", label: "Zona II", lat: 28.08, lng: -15.45 },
+];
 
 export default function SelectZonePage() {
   const router = useRouter();
@@ -15,36 +21,42 @@ export default function SelectZonePage() {
     router.push("/incident");
   };
 
+  const markers = useMemo(
+    () =>
+      zones.map((zone) => ({
+        id: zone.id,
+        lat: zone.lat,
+        lng: zone.lng,
+        label: zone.label,
+        selected: selectedZone === zone.id,
+      })),
+    [selectedZone]
+  );
+
   return (
-    <main className="flex h-screen flex-col items-center justify-center bg-slate-100">
-      <h1 className="mb-8 text-3xl font-semibold">
-        Seleccione Zona del Suceso
-      </h1>
-      <div className="mb-6 flex gap-4">
-        {[
-          ["zona-1", "Zona I"],
-          ["zona-2", "Zona II"],
-        ].map(([id, label]) => (
-          <button
-            key={id}
-            onClick={() => setSelectedZone(id)}
-            className={`rounded-lg border px-8 py-4 shadow-soft transition ${
-              selectedZone === id
-                ? "border-blue-700 bg-blue-700 text-white"
-                : "border-slate-300 bg-white hover:bg-slate-50"
-            }`}
-          >
-            {label}
-          </button>
-        ))}
+    <main className="flex h-screen flex-col bg-slate-100 p-8">
+      <h1 className="mb-4 text-2xl font-semibold">Seleccione Zona del Suceso</h1>
+      <div className="flex-1 overflow-hidden rounded-xl border border-slate-300">
+        <LeafletMap
+          center={[28.12, -15.42]}
+          zoom={11}
+          markers={markers}
+          onMarkerClick={setSelectedZone}
+          className="h-full w-full"
+        />
       </div>
-      <button
-        onClick={go}
-        disabled={!selectedZone}
-        className="rounded-lg bg-slate-900 px-5 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
-      >
-        Continuar
-      </button>
+      <div className="mt-4 flex items-center justify-between">
+        <p className="text-sm text-slate-700">
+          {selectedZone ? `Seleccionada: ${zones.find((zone) => zone.id === selectedZone)?.label}` : "Selecciona una zona para continuar"}
+        </p>
+        <button
+          onClick={go}
+          disabled={!selectedZone}
+          className="rounded-lg bg-slate-900 px-5 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          Continuar
+        </button>
+      </div>
     </main>
   );
 }

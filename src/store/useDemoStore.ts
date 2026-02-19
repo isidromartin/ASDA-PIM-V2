@@ -51,6 +51,14 @@ type PolrepFormData = {
   acciones: string;
 };
 
+
+type NoticePin = {
+  id: string;
+  lat: number;
+  lng: number;
+  label: string;
+};
+
 type NotificationItem = {
   id: string;
   message: string;
@@ -76,6 +84,7 @@ type DemoStore = {
   lastAction: string;
   alertDraft: AlertFormData;
   polrepDraft: PolrepFormData;
+  noticePins: NoticePin[];
   guideData: {
     producto: string;
     lugar: string;
@@ -94,6 +103,7 @@ type DemoStore = {
   dismissActiveNotification: () => void;
   saveAlertDraft: (payload: AlertFormData) => void;
   savePolrepDraft: (payload: PolrepFormData) => void;
+  addNoticePin: (lat: number, lng: number, label?: string) => void;
   checkGuideStep: (id: number) => void;
   setGuideData: (field: keyof DemoStore['guideData'], value: string) => void;
   resetDemo: () => void;
@@ -129,6 +139,9 @@ const initialState = {
     resumen: '',
     acciones: ''
   },
+  noticePins: [
+    { id: 'pin-1', lat: 28.138, lng: -15.417, label: 'Aviso inicial' }
+  ],
   guideData: {
     producto: '',
     lugar: '',
@@ -198,6 +211,11 @@ export const useDemoStore = create<DemoStore>()(
         }),
       saveAlertDraft: (payload) => set({ alertDraft: payload, lastAction: 'Formulario Alerta guardado (mock).' }),
       savePolrepDraft: (payload) => set({ polrepDraft: payload, lastAction: 'Formulario POLREP guardado (mock).' }),
+      addNoticePin: (lat, lng, label = 'Nuevo aviso') =>
+        set((state) => ({
+          noticePins: [...state.noticePins, { id: crypto.randomUUID(), lat, lng, label }],
+          lastAction: `Chincheta añadida en ${lat.toFixed(4)}, ${lng.toFixed(4)}`
+        })),
       checkGuideStep: (id) =>
         set((state) => ({
           guideSteps: state.guideSteps.map((step) => (step.id === id ? { ...step, checked: !step.checked } : step))
@@ -220,6 +238,7 @@ export const useDemoStore = create<DemoStore>()(
         lastAction: state.lastAction,
         alertDraft: state.alertDraft,
         polrepDraft: state.polrepDraft,
+        noticePins: state.noticePins,
         guideData: state.guideData
       })
     }
