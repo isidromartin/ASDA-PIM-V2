@@ -21,23 +21,26 @@ export function NotificationBanner() {
   if (!activeNotification) return null;
 
   return (
-    <div className="border-b border-slate-300 bg-white px-4 py-2 text-xs">
-      <div className={`flex items-center justify-between rounded border px-3 py-2 shadow-soft ${styleByVariant[activeNotification.variant]}`}>
-        <div className="flex items-center gap-2">
-          <span>{activeNotification.message}</span>
-          {activeNotification.windowType && activeNotification.windowTitle && (
-            <button
-              type="button"
-              className="rounded border border-current/40 px-2 py-0.5 text-[11px]"
-              onClick={() => openWindow(activeNotification.windowType!, activeNotification.windowTitle!)}
-            >
-              Abrir ventana
-            </button>
-          )}
+    <div className="pointer-events-none fixed right-4 top-24 z-50 w-[360px] max-w-[calc(100vw-2rem)]">
+      <div
+        className={`pointer-events-auto rounded border px-3 py-2 text-xs shadow-soft ${styleByVariant[activeNotification.variant]}`}
+      >
+        <div className="mb-1 flex items-center justify-between gap-2">
+          <p className="font-semibold">Notificación</p>
+          <button type="button" className="text-[11px] underline" onClick={() => dismissActiveNotification()}>
+            Cerrar
+          </button>
         </div>
-        <button type="button" className="text-[11px] underline" onClick={() => dismissActiveNotification()}>
-          Cerrar
-        </button>
+        <p>{activeNotification.message}</p>
+        {activeNotification.windowType && activeNotification.windowTitle && (
+          <button
+            type="button"
+            className="mt-2 rounded border border-current/40 px-2 py-0.5 text-[11px]"
+            onClick={() => openWindow(activeNotification.windowType!, activeNotification.windowTitle!)}
+          >
+            Ir a {activeNotification.windowTitle}
+          </button>
+        )}
       </div>
     </div>
   );

@@ -9,7 +9,6 @@ export function AppFrame() {
   return (
     <div className="relative flex h-screen flex-col bg-slate-200">
       <MenuRibbon />
-      <NotificationBanner />
       <StatusStrip />
       <div className="relative flex flex-1 gap-0 p-3">
         <div className="relative flex-1">
@@ -18,6 +17,7 @@ export function AppFrame() {
         </div>
         <RightPanel />
       </div>
+      <NotificationBanner />
     </div>
   );
 }
