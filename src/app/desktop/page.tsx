@@ -12,7 +12,7 @@ export default function DesktopPage() {
         onClick={() => router.push("/select-port")}
         className="flex flex-col items-center gap-2 rounded-xl border border-white/40 bg-white/10 p-6 text-white shadow-soft"
       >
-        <div className="flex h-16 w-16 items-center justify-center rounded bg-white/20 p-1">
+        <div className="flex h-16 w-16 items-center justify-center rounded bg-white p-1">
           <Image
             src="/assets/icono.png"
             alt="Icono DAGAS-PIM"
