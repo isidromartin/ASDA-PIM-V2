@@ -123,7 +123,32 @@ type DemoStore = {
 
 const makeGuideSteps = (): GuideStep[] => guideStepLabels.map((label, index) => ({ id: index + 1, label, checked: false }));
 
-const initialState = {
+
+type DemoState = Omit<
+  DemoStore,
+  | 'setPort'
+  | 'setZone'
+  | 'setIncidentStatus'
+  | 'addLog'
+  | 'toggleOverlay'
+  | 'openWindow'
+  | 'closeWindow'
+  | 'closeWindowByType'
+  | 'enqueueNotification'
+  | 'dismissActiveNotification'
+  | 'saveAlertDraft'
+  | 'savePolrepDraft'
+  | 'completeAlert'
+  | 'completePolrep'
+  | 'addNoticePin'
+  | 'updateNoticePin'
+  | 'removeNoticePin'
+  | 'checkGuideStep'
+  | 'setGuideData'
+  | 'resetDemo'
+>;
+
+const initialState: DemoState = {
   incidentStatus: 'ALERTA' as IncidentStatus,
   currentRole: 'OC' as const,
   overlaysEnabled: false,
